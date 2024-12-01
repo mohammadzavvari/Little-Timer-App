@@ -1,1 +1,9 @@
 pygame==2.6.1
+altgraph==0.17.4
+importlib_metadata==8.5.0
+macholib==1.16.3
+packaging==24.2
+pygame==2.6.1
+pyinstaller==6.11.1
+pyinstaller-hooks-contrib==2024.10
+zipp==3.20.2
