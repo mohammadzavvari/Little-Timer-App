@@ -9,7 +9,7 @@ class TimerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Timer App")
-        self.root.geometry("400x250")
+        self.root.geometry("400x300")
         self.root.resizable(False, False)
         self.root.attributes("-topmost", True)
 
@@ -25,22 +25,22 @@ class TimerApp:
         self.button_frame = tk.Frame(self.root)
         self.button_frame.pack(pady=5)
 
-        self.start_pause_button = tk.Button(
+        self.start_button = tk.Button(
             self.button_frame,
             text="Start",
             font=("Arial", 12),
-            command=self.toggle_start_pause,
+            command=self.start_timer,
         )
-        self.start_pause_button.grid(row=0, column=0, padx=5)
+        self.start_button.grid(row=0, column=0, padx=5)
 
-        self.resume_button = tk.Button(
+        self.pause_resume_button = tk.Button(
             self.button_frame,
-            text="Resume",
+            text="Pause",
             font=("Arial", 12),
-            command=self.resume_timer,
+            command=self.toggle_pause_resume,
         )
-        self.resume_button.grid(row=0, column=1, padx=5)
-        self.resume_button.grid_remove()
+        self.pause_resume_button.grid(row=0, column=1, padx=5)
+        self.pause_resume_button.grid_remove()
 
         self.cancel_button = tk.Button(
             self.button_frame,
@@ -49,7 +49,6 @@ class TimerApp:
             command=self.cancel_timer,
         )
         self.cancel_button.grid(row=0, column=2, padx=5)
-        self.cancel_button.grid_remove()
 
         self.add_time_frame = tk.Frame(self.root)
         self.add_time_frame.pack(pady=10)
@@ -90,42 +89,37 @@ class TimerApp:
             )
             return None
 
-    def toggle_start_pause(self):
-        if not self.running:
-            self.start_timer()
-        else:
-            self.pause_timer()
-
     def start_timer(self):
         if self.time_left == 0:
             self.time_left = 3600  # Default to 1 hour if no time set
         self.running = True
-        self.start_pause_button.config(text="Pause")
-        self.resume_button.grid_remove()
-        self.cancel_button.grid_remove()
         self.update_timer()
+        self.start_button.grid_remove()
+        self.pause_resume_button.config(text="Pause")
+        self.pause_resume_button.grid()
+
+    def toggle_pause_resume(self):
+        if self.running:
+            self.pause_timer()
+        else:
+            self.resume_timer()
 
     def pause_timer(self):
         self.running = False
-        self.start_pause_button.config(text="Resume")
-        self.resume_button.grid()
-        self.cancel_button.grid()
+        self.pause_resume_button.config(text="Resume")
 
     def resume_timer(self):
         if not self.running and self.time_left > 0:
             self.running = True
-            self.start_pause_button.config(text="Pause")
-            self.resume_button.grid_remove()
-            self.cancel_button.grid_remove()
             self.update_timer()
+            self.pause_resume_button.config(text="Pause")
 
     def cancel_timer(self):
         self.running = False
         self.time_left = 0
-        self.start_pause_button.config(text="Start")
-        self.resume_button.grid_remove()
-        self.cancel_button.grid_remove()
         self.update_display()
+        self.start_button.grid()
+        self.pause_resume_button.grid_remove()
         if self.music_playing:
             pygame.mixer.music.stop()
             self.music_playing = False
@@ -136,7 +130,6 @@ class TimerApp:
         if self.music_playing:
             pygame.mixer.music.stop()
             self.music_playing = False
-            self.start_pause_button.config(text="Pause")
 
     def update_display(self):
         mins, secs = divmod(self.time_left, 60)
@@ -153,19 +146,14 @@ class TimerApp:
             self.timer_label.config(text="00:00:00")
             self.running = False
             self.play_sound()
-            self.start_pause_button.config(text="Pause Music")
+            self.pause_resume_button.grid_remove()
+            self.start_button.grid()
 
     def play_sound(self):
         try:
             pygame.mixer.music.load("alarm.mp3")
             pygame.mixer.music.play(-1)  # Loop the music
-            pygame.mixer.music.set_pos(44)  # Start playback at a specific time
+            pygame.mixer.music.set_pos(44.3)  # Start playing from 44 seconds
             self.music_playing = True
         except Exception as e:
             messagebox.showerror("Error", f"Could not play sound: {e}")
-
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = TimerApp(root)
-    root.mainloop()
