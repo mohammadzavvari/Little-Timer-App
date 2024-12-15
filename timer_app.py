@@ -151,9 +151,9 @@ class TimerApp:
 
     def play_sound(self):
         try:
-            pygame.mixer.music.load("alarm.mp3")
+            pygame.mixer.music.load("alarm-1.mp3")
             pygame.mixer.music.play(-1)  # Loop the music
-            pygame.mixer.music.set_pos(44.3)  # Start playing from 44 seconds
+            pygame.mixer.music.set_pos()  # Start playing from 44 seconds
             self.music_playing = True
         except Exception as e:
             messagebox.showerror("Error", f"Could not play sound: {e}")
